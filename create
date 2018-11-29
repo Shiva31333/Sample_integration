@@ -1,0 +1,16 @@
+CREATE TABLE `AlertSummaryRep`.`Alert` (
+  `idAlert` INT NOT NULL AUTO_INCREMENT,
+  `reportName` VARCHAR(45) NULL,
+  `orgid` VARCHAR(45) NULL DEFAULT NULL,
+  `siteid` VARCHAR(45) NULL DEFAULT NULL,
+  `Timeperiod` ENUM('last 2 days', 'last 1 week', 'last 1 month') NULL DEFAULT NULL,
+  `Schedule` ENUM('Daily', 'Weekly', 'Monthly') NULL DEFAULT NULL,
+  `scheduleTime` VARCHAR(45) NULL DEFAULT NULL,
+  `lastSent` DATETIME NULL DEFAULT NULL,
+  `nextScheduled` VARCHAR(45) NULL DEFAULT NULL,
+  `active` TINYINT NULL DEFAULT NULL,
+  `rules` TEXT NULL DEFAULT NULL,
+  `userEmails` TEXT NULL DEFAULT NULL,
+  `created` DATETIME NULL DEFAULT NULL,
+  `updated` DATETIME NULL,
+  PRIMARY KEY (`idAlert`));
