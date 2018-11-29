@@ -1,0 +1,160 @@
+//
+// Source code recreated from a .class file by IntelliJ IDEA
+// (powered by Fernflower decompiler)
+//
+
+package com.amazonaws.lambda.demo;
+
+import com.amazonaws.services.lambda.runtime.Context;
+import com.amazonaws.services.lambda.runtime.RequestHandler;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.LinkedHashMap;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+
+public class LambdaFunctionHandler implements RequestHandler<Object, String> {
+    String dbname = "AlertSummaryRep";
+    String url = "jdbc:mysql://alertsummaryreportdb.cmena5fcusmr.us-west-2.rds.amazonaws.com:3306/";
+    String username = "AlertSummaryRep";
+    String password = "Alert_Summary_Report_DB";
+    final String tb_input_table = "alert_summary_report";
+    Connection con = null;
+    Context context;
+
+    public LambdaFunctionHandler() {
+    }
+
+    public String handleRequest(Object input, Context context) {
+        this.context = context;
+        context.getLogger().log("Input: " + input);
+        LinkedHashMap param = (LinkedHashMap)input;
+
+        try {
+            this.connectDB();
+        } catch (SQLException var9) {
+            context.getLogger().log(var9.getStackTrace().toString());
+        }
+
+        String command = (String)param.get("command");
+        String id = (String)param.get("id");
+        String name = (String)param.get("name");
+        if (command == null) {
+            return "Specity 'command' parameter.";
+        } else {
+            try {
+                switch(command.hashCode()) {
+                case -487563817:
+                    if (command.equals("CREATE_REPORT")) {
+                        return this.create_report(param);
+                    }
+                    break;
+                case -33404323:
+                    if (command.equals("GET_REPORT")) {
+                        return this.get_report(param);
+                    }
+                    break;
+                case 64935274:
+                    if (command.equals("UPDATE_REPORT")) {
+                        return this.update_report(param);
+                    }
+                    break;
+                case 1159200927:
+                    if (command.equals("GET_REPORT_ALL")) {
+                        return this.get_report_all();
+                    }
+                    break;
+                case 1356113480:
+                    if (command.equals("DELETE_REPORT")) {
+                        return this.delete_report(param);
+                    }
+                }
+            } catch (SQLException var8) {
+                var8.printStackTrace();
+            }
+
+            return input.toString();
+        }
+    }
+
+    private String get_report_all() throws SQLException {
+        JSONArray ansObj = new JSONArray();
+        String query = String.format("SELECT * FROM %s.%s ", this.dbname, "alert_summary_report");
+        Statement stmt = this.con.createStatement();
+
+        try {
+            ResultSet rs = stmt.executeQuery(query);
+            boolean var5 = false;
+
+            while(rs.next()) {
+                try {
+                    int reportid = rs.getInt(1);
+                    String reportName = rs.getString(2);
+                    JSONObject obj = new JSONObject();
+                    obj.put("reportid", reportid);
+                    obj.put("reportName", reportName);
+                    ansObj.add(obj);
+                } catch (Exception var12) {
+                    this.log(var12.getMessage());
+                }
+            }
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+
+        }
+
+        return ansObj.toJSONString();
+    }
+
+    private String get_report(LinkedHashMap param) {
+        JSONArray ansObj = new JSONArray();
+        return ansObj.toJSONString();
+    }
+
+    private String create_report(LinkedHashMap param) {
+        JSONArray ansObj = new JSONArray();
+        return ansObj.toJSONString();
+    }
+
+    private String update_report(LinkedHashMap param) {
+        JSONArray ansObj = new JSONArray();
+        return ansObj.toJSONString();
+    }
+
+    private String delete_report(LinkedHashMap param) {
+        JSONArray ansObj = new JSONArray();
+        return ansObj.toJSONString();
+    }
+
+    private boolean connectDB() throws SQLException {
+        this.log("Loading driver...");
+
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            this.log("Driver loaded!");
+        } catch (ClassNotFoundException var3) {
+            this.log("Cannot find the driver in the classpath!");
+            return false;
+        }
+
+        this.log("Connecting database...");
+
+        try {
+            this.con = DriverManager.getConnection(this.url + this.dbname, this.username, this.password);
+            this.log("Database connected!\n");
+            return true;
+        } catch (SQLException var2) {
+            this.log(var2.getMessage());
+            return false;
+        }
+    }
+
+    void log(String msg) {
+        this.context.getLogger().log(msg);
+    }
+}
